@@ -85,11 +85,9 @@ Please see original function for FUNDEF, FUNNAME, MACRO-ONLY usage."
           fundef
         (when purify-flag
           (error "Attempt to autoload %s while preparing to dump" (symbol-name funname)))
-        (unwind-protect
-            (let ((ignore-errors (if (or (eq kind t) (eq kind 'macro)) nil macro-only)))
-              (load (cadr fundef) ignore-errors t nil t))
-          ;; FIXME: revert partially performed defuns
-          )
+        ;; FIXME: Revert partially performed definitions if loading fails.
+        (let ((noerror (if (or (eq kind t) (eq kind 'macro)) nil macro-only)))
+          (load (cadr fundef) noerror t nil t))
         (if (null funname)
             nil
           (let ((fun (indirect-function funname)))
